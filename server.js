@@ -1,6 +1,11 @@
 const express = require('express');
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+
+const createCat = require('./services/createCat');
+const Cat = require('./modules/Cat');
+require('./config/db');
 
 const checkCatIdMiddleware = require('./middlewares/middleware');
 const logger = require('./middlewares/loggerMiddleware');
@@ -20,9 +25,17 @@ app.engine('hbs', exphbs.engine({
 app.set('view engine', 'hbs');
 
 app.get('/', (req, res) => {
-    let name = 'Navcho';
+    // createCat('Navcho', 'Ivaylo');
+    Cat.find({name: 'Navcho'})
+        .populate('owner')
+        .then(cat => {
+            console.log(cat);
+            
+            let name = 'Navcho';
+            res.render('home', { name });
+        })
 
-    res.render('home', { name });
+    
 });
 
 app.get('/download', (req, res) => {
